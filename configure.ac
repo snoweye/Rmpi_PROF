@@ -308,6 +308,11 @@ AC_ARG_ENABLE([pbdPROF],
 
 PROF_LDFLAGS=""
 if test "X${ENABLE_PBDPROF}" = "Xyes"; then
+  CHECK_PROF=`${R_SCMD} "cat(sum(rownames(installed.packages())=='pbdPROF'))"`
+  if test ${CHECK_PROF} -ne 1; then
+    AC_MSG_ERROR([pbdPROF is not installed correctly])
+  fi
+
   FPMPI_EXT_LINK=`${R_SCMD} "source('./R/get_conf.r');get.conf('FPMPI_EXT_LINK','"${R_ARCH}"','pbdPROF')"`
   FPMPI_INTERNAL=`${R_SCMD} "source('./R/get_conf.r');get.conf('FPMPI_INTERNAL','"${R_ARCH}"','pbdPROF')"`
   MPIP_EXT_LINK=`${R_SCMD} "source('./R/get_conf.r');get.conf('MPIP_EXT_LINK','"${R_ARCH}"','pbdPROF')"`
