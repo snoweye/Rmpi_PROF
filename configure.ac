@@ -320,7 +320,7 @@ if test "X${ENABLE_PBDPROF}" = "Xyes"; then
   PROF_TYPE=`${R_SCMD} "source('./R/get_conf.r');get.conf('PROF_TYPE','"${R_ARCH}"','pbdPROF')"`
 
   dnl fpmpi is asked.
-  if test "X$PROF_TYPE" == "Xfpmpi"; then
+  if test "X$PROF_TYPE" = "Xfpmpi"; then
     if test "X$FPMPI_INTERNAL" = "Xyes"; then
       dnl Internal library is available.
       R_FPMPI=`${R_SCMD} "source('./R/get_lib.r');get.lib('R_FPMPI','"${R_ARCH}"','pbdPROF')"`
@@ -336,12 +336,12 @@ if test "X${ENABLE_PBDPROF}" = "Xyes"; then
   fi
 
   dnl mpiP is asked.
-  if test "X$PROF_TYPE" == "XmpiP"; then
+  if test "X$PROF_TYPE" = "XmpiP"; then
     PROF_LDFLAGS="$MPIP_EXT_LINK"
   fi
 
   dnl TAU is asked.
-  if test "X$PROF_TYPE" == "XTAU"; then
+  if test "X$PROF_TYPE" = "XTAU"; then
     PROF_LDFLAGS="$TAU_EXT_LINK"
   fi
 
