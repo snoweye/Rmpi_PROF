@@ -115,4 +115,3 @@ Some Internal Functions used by Other MPI Functions
 
 mpi.comm.is.null	Test if a comm is NULL (no members)
 string			Create a string (empty space character) buffer
-
