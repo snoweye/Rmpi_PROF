@@ -11,7 +11,7 @@ Description: Rmpi provides an interface (wrapper) to MPI APIs. It also
         provides interactive R slave environment.
 License: GPL (>= 2)
 URL: http://www.stats.uwo.ca/faculty/yu/Rmpi
-Packaged: 2013-07-17 14:29:20 UTC; snoweye
+Packaged: 2013-07-22 20:21:40 UTC; snoweye
 Author: Hao Yu [aut, cre],
   Wei-Chen Chen [ctb]
 Maintainer: Hao Yu <hyu@stats.uwo.ca>
