@@ -1,6 +1,23 @@
+dnl This file was original for Rmpi written by Dr. Yu Hao, and may be
+dnl modified by Prof. Brian Rieply and suggested by R Core Team.
+dnl Later, it was added by Wei-Chen Chen for pbdMPI and pbdPROF for more
+dnl functionalities combining with Makevars.in.
+
+
 dnl Process this file with autoconf to produce a configure script.
 
 AC_INIT(DESCRIPTION)
+
+dnl WCC:add
+dnl Determine R_HOME.
+: ${R_HOME=`R RHOME`}
+if test -z "${R_HOME}"; then
+  echo "could not determine R_HOME"
+  exit 1
+fi
+R_SCMD="${R_HOME}/bin/Rscript -e"
+dnl WCC:add_end
+
 
 OSTYPE="`uname`"
 
@@ -58,6 +75,142 @@ else
   fi
 fi
 
+
+dnl WCC:add
+dnl Check compiler.
+CC=`"${R_HOME}/bin/R" CMD config CC`
+AC_PROG_CC
+if test "X$CC" = "X" ; then
+  # Our best guess...
+  CC="gcc -std=gnu99"
+fi
+
+
+dnl Check MPI in path.
+AC_CHECK_PROG(MPIRUN, mpirun, mpirun, "F")
+AC_CHECK_PROG(MPIEXEC, mpiexec, mpiexec, "F")
+AC_CHECK_PROG(ORTERUN, orterun, orterun, "F")
+AC_CHECK_PROG(SED, sed, sed, "F")
+AC_CHECK_PROG(MPICC, mpicc, mpicc, "F")
+AC_CHECK_PROG(OMPI_INFO, ompi_info, ompi_info, "F")
+AC_CHECK_PROG(MPICH2VERSION, mpich2version, mpich2version, "F")
+
+
+dnl For OpenMPI
+if test -z "${MPI_INCLUDE_PATH}" ; then
+  if test "$MPITYPE" = "UNKNOWN" -o "$MPITYPE" = "OPENMPI" ; then
+    if test "$SED" != "F" -a "$MPICC" != "F" -a "$OMPI_INFO" != "F" ; then
+      echo "found sed, mpicc, and ompi_info ..."
+      TMP_INC="F"
+      TMP_LIB="F"
+
+      TMP_INC_DIRS=`mpicc --showme:incdirs`
+      echo ">> TMP_INC_DIRS = ${TMP_INC_DIRS}"
+
+      TMP_IFS="${IFS}"; IFS=" "
+      for dir in ${TMP_INC_DIRS}; do
+        echo "checking ${dir} ..."
+        if test -f "${dir}/mpi.h" ; then
+          echo "found ${dir}/mpi.h ..."
+          TMP_INC=${dir}
+          break
+        fi
+      done
+      IFS="${TMP_IFS}"
+
+      TMP_LIB_DIRS=`mpicc --showme:libdirs`
+      echo ">> TMP_LIB_DIRS = ${TMP_LIB_DIRS}"
+
+      TMP_IFS="${IFS}"; IFS=" "
+      for dir in ${TMP_LIB_DIRS}; do
+        echo "checking ${dir} ..."
+        if test -f "${dir}/libmpi.so" ; then
+          echo "found ${dir}/libmpi.so ..."
+          TMP_LIB=${dir}
+          break
+        fi
+        dnl For Mac OS X
+        if test -f "${dir}/libmpi.dylib" ; then
+          echo "found ${dir}/libmpi.dylib ..."
+          TMP_LIB=${dir}
+          break
+        fi
+      done
+      IFS="${TMP_IFS}"
+
+      if test "${TMP_INC}" != "F" -a "${TMP_LIB}" != "F" ; then
+        echo "found mpi.h and libmpi.so ..."
+        echo ">> TMP_INC = ${TMP_INC}"
+        echo ">> TMP_LIB = ${TMP_LIB}"
+        MPITYPE="OPENMPI"
+        MPI_INCLUDE_PATH="${TMP_INC}"
+        MPI_LIBPATH="${TMP_LIB}"
+      fi
+    fi
+  fi
+fi
+
+
+dnl For MPICH2
+if test -z "${MPI_INCLUDE_PATH}" ; then
+#  if test "$MPITYPE" = "UNKNOWN" -o "$MPITYPE" = "MPICH2" ; then
+### MPICH2 users have to specify --with-Rmpi-type=MPICH2 to get this.
+  if test "$MPITYPE" = "MPICH2" ; then
+    if test "$SED" != "F" -a "$MPICC" != "F" -a "$MPICH2VERSION" != "F" ; then
+      echo "found sed, mpicc, and mpich2version ..."
+      TMP_INC="F"
+      TMP_LIB="F"
+
+      TMP_CMD=`mpicc -show`
+      echo ">> TMP_CMD = ${TMP_CMD}"
+
+      TMP_IFS="${IFS}"; IFS=" "
+      for dir in ${TMP_CMD}; do
+        dir_inc=`echo ${dir} | sed -e "s/^-I\(.*\)$/\1/"`
+
+        echo "checking ${dir_inc} ..."
+        if test -f "${dir_inc}/mpi.h" ; then
+          echo "found ${dir_inc}/mpi.h ..."
+          TMP_INC=${dir_inc}
+          break
+        fi
+      done
+      IFS="${TMP_IFS}"
+
+      TMP_IFS="${IFS}"; IFS=" "
+      for dir in ${TMP_CMD}; do
+        dir_lib=`echo ${dir} | sed -e "s/^-L\(.*\)$/\1/"`
+
+        echo "checking ${dir_lib} ..."
+        if test -f "${dir_lib}/libmpich.so" ; then
+          echo "found ${dir_lib}/libmpich.so ..."
+          TMP_LIB=${dir_lib}
+          break
+        fi
+        dnl For Mac OS X
+        if test -f "${dir_lib}/libmpich.dylib" ; then
+          echo "found ${dir_lib}/libmpich.dylib ..."
+          TMP_LIB=${dir_lib}
+          break
+        fi
+      done
+      IFS="${TMP_IFS}"
+
+      if test "${TMP_INC}" != "F" -a "${TMP_LIB}" != "F" ; then
+        echo "found mpi.h and libmpich.so ..."
+        echo ">> TMP_INC = ${TMP_INC}"
+        echo ">> TMP_LIB = ${TMP_LIB}"
+        MPITYPE="MPICH2"
+        MPI_INCLUDE_PATH="${TMP_INC}"
+        MPI_LIBPATH="${TMP_LIB}"
+      fi
+    fi
+  fi
+fi
+dnl WCC:add_end
+
+
+dnl Original Rmpi configure.ac
 if test -z "${MPI_INCLUDE_PATH}" ; then
 dnl 'paths not specified'
 
@@ -73,13 +226,15 @@ AC_ARG_WITH(mpi,
     fi  ]
 )
 
-CC=`"${R_HOME}/bin/R" CMD config CC`
-CFLAGS=`"${R_HOME}/bin/R" CMD config CFLAGS`
-AC_PROG_CC
-if test "X$CC" = "X" ; then
-# Our best guess...
-CC="gcc -std=gnu99"
-fi
+dnl WCC:del
+dnl CC=`"${R_HOME}/bin/R" CMD config CC`
+dnl CFLAGS=`"${R_HOME}/bin/R" CMD config CFLAGS`
+dnl AC_PROG_CC
+dnl if test "X$CC" = "X" ; then
+dnl # Our best guess...
+dnl CC="gcc -std=gnu99"
+dnl fi
+dnl WCC:del_end
 
 if test -z "$MPI_ROOT" ; then
   for d in /opt/lib /usr/lib /usr /usr/local/lib /usr/local \
@@ -293,14 +448,7 @@ case "$MPITYPE" in
 esac
 
 
-dnl Determine R_HOME.
-: ${R_HOME=‘R RHOME‘}
-if test -z "${R_HOME}"; then
-  echo "could not determine R_HOME"
-  exit 1
-fi
-R_SCMD="${R_HOME}/bin/Rscript -e"
-
+dnl WCC:add
 dnl pbdPROF
 AC_ARG_ENABLE([pbdPROF],
     AC_HELP_STRING([--enable-pbdPROF], [Enable pbdPROF.]),
@@ -348,6 +496,7 @@ if test "X${ENABLE_PBDPROF}" = "Xyes"; then
   dnl reset PKG_LIBS to take off MPI library but redirect to profiler libraries.
   PKG_LIBS="${PROF_LDFLAGS} ${PKG_LIBS}"
 fi
+dnl WCC:add_end
 
 
 dnl Start to substitute templates
