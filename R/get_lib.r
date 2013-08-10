@@ -15,7 +15,7 @@ get.lib <- function(arg, arch, package = "pbdPROF"){
                    system.file(lib.file, package = package))
     cat(file.path)
   } else{
-    comm.stop("The arg is not found.")
+    stop("The arg is not found.")
   }
 
   invisible()

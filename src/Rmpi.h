@@ -5,6 +5,12 @@
 #include <R_ext/Random.h>
 #include <Rinternals.h>
 
+
+#ifndef XLENGTH
+#define XLENGTH LENGTH
+#endif
+
+
 #define CHAR2(x) ((char *)CHAR(x))
 
 /* #define COMM_MAXSIZE 10 */

@@ -1,6 +1,6 @@
 Package: Rmpi
-Version: 0.6-4
-Date: 2013-07-24
+Version: 0.6-5
+Date: 2013-08-10
 Title: Interface (Wrapper) to MPI (Message-Passing Interface)
 Authors@R: c(person("Hao", "Yu", role = c("aut", "cre"), email =
         "hyu@stats.uwo.ca"), person("Wei-Chen", "Chen", role = c("ctb")))
@@ -11,7 +11,7 @@ Description: Rmpi provides an interface (wrapper) to MPI APIs. It also
         provides interactive R slave environment.
 License: GPL (>= 2)
 URL: http://www.stats.uwo.ca/faculty/yu/Rmpi
-Packaged: 2013-07-24 16:33:35 UTC; snoweye
+Packaged: 2013-08-10 10:50:24 UTC; snoweye
 Author: Hao Yu [aut, cre],
   Wei-Chen Chen [ctb]
 Maintainer: Hao Yu <hyu@stats.uwo.ca>
