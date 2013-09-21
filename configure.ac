@@ -457,7 +457,7 @@ AC_ARG_ENABLE([pbdPROF],
 PROF_LDFLAGS=""
 if test "X${ENABLE_PBDPROF}" = "Xyes"; then
   CHECK_PROF=`${R_SCMD} "cat(sum(rownames(installed.packages())=='pbdPROF'))"`
-  if test ${CHECK_PROF} -ne 1; then
+  if test ${CHECK_PROF} -lt 1; then
     AC_MSG_ERROR([pbdPROF is not installed correctly])
   fi
 

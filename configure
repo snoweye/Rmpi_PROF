@@ -4203,7 +4203,7 @@ fi
 PROF_LDFLAGS=""
 if test "X${ENABLE_PBDPROF}" = "Xyes"; then
   CHECK_PROF=`${R_SCMD} "cat(sum(rownames(installed.packages())=='pbdPROF'))"`
-  if test ${CHECK_PROF} -ne 1; then
+  if test ${CHECK_PROF} -lt 1; then
     as_fn_error $? "pbdPROF is not installed correctly" "$LINENO" 5
   fi
 
