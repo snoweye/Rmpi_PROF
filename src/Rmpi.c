@@ -16,6 +16,7 @@
  */
 
 #include "Rmpi.h"
+#include "Rmpi_spmd.h"
 
 #ifdef OPENMPI
 #include <dlfcn.h>
@@ -128,7 +129,7 @@ SEXP mpi_get_processor_name (){
 
 /*
 SEXP bin_nchar(SEXP sexp_data){
-	return AsInt(XLENGTH(STRING_ELT(sexp_data,0)));
+	return AsInt(LENGTH(STRING_ELT(sexp_data,0)));
 }
 */
 
@@ -247,18 +248,18 @@ SEXP mpi_gather(SEXP sexp_sdata,
 
 	switch (INTEGER(sexp_type)[0]){
 	case 1:
- 		len=XLENGTH(sexp_sdata);
+ 		len=LENGTH(sexp_sdata);
 		mpi_errhandler(MPI_Gather(INTEGER(sexp_sdata), len, MPI_INT, 
 			INTEGER(sexp_rdata), len, MPI_INT, root, comm[commn]));
 		break;
 	case 2:
- 		len=XLENGTH(sexp_sdata);
+ 		len=LENGTH(sexp_sdata);
 		mpi_errhandler(MPI_Gather(REAL(sexp_sdata), len, MPI_DOUBLE, 
 			REAL(sexp_rdata), len, MPI_DOUBLE, root, comm[commn]));
 		break;
 	case 3: 
-		len=XLENGTH(STRING_ELT(sexp_sdata,0));
-		rlen=XLENGTH(STRING_ELT(sexp_rdata,0));
+		len=LENGTH(STRING_ELT(sexp_sdata,0));
+		rlen=LENGTH(STRING_ELT(sexp_rdata,0));
 
         	PROTECT (sexp_rdata2  = allocVector (STRSXP, 1));
         	rdata = (char *)Calloc(rlen, char);
@@ -269,7 +270,7 @@ SEXP mpi_gather(SEXP sexp_sdata,
 		Free(rdata);
 		break;
 	case 4:
-                len=XLENGTH(sexp_sdata);
+                len=LENGTH(sexp_sdata);
                 mpi_errhandler(MPI_Gather(RAW(sexp_sdata), len, MPI_BYTE,
                         RAW(sexp_rdata), len, MPI_BYTE, root, comm[commn]));
                 break;
@@ -308,20 +309,20 @@ SEXP mpi_gatherv(SEXP sexp_sdata,
 
 	switch (INTEGER(sexp_type)[0]){
 	case 1:
-		len=XLENGTH(sexp_sdata);
+		len=LENGTH(sexp_sdata);
 		mpi_errhandler(MPI_Gatherv(INTEGER(sexp_sdata), len, MPI_INT, 
 			INTEGER(sexp_rdata), INTEGER(sexp_recvcounts), displs, MPI_INT, 
 				root, comm[commn]));
 		break;
 	case 2:
-		len=XLENGTH(sexp_sdata);
+		len=LENGTH(sexp_sdata);
 		mpi_errhandler(MPI_Gatherv(REAL(sexp_sdata), len, MPI_DOUBLE, 
 			REAL(sexp_rdata), INTEGER(sexp_recvcounts), displs, 
 				MPI_DOUBLE, root, comm[commn]));
 		break;
 	case 3:
-		len=XLENGTH(STRING_ELT(sexp_sdata,0));	
-		rlen=XLENGTH(STRING_ELT(sexp_rdata,0));
+		len=LENGTH(STRING_ELT(sexp_sdata,0));	
+		rlen=LENGTH(STRING_ELT(sexp_rdata,0));
         
                 PROTECT (sexp_rdata2  = allocVector (STRSXP, 1));
                 rdata = (char *)Calloc(rlen, char);
@@ -333,7 +334,7 @@ SEXP mpi_gatherv(SEXP sexp_sdata,
 		Free(rdata);
 		break;
 	case 4:
-                len=XLENGTH(sexp_sdata);
+                len=LENGTH(sexp_sdata);
                 mpi_errhandler(MPI_Gatherv(RAW(sexp_sdata), len, MPI_BYTE,
                         RAW(sexp_rdata), INTEGER(sexp_recvcounts), displs,
                                 MPI_BYTE, root, comm[commn]));
@@ -366,18 +367,18 @@ SEXP mpi_scatter(SEXP sexp_sdata,
 
 	switch (INTEGER(sexp_type)[0]){
 	case 1:
- 		len=XLENGTH(sexp_rdata);
+ 		len=LENGTH(sexp_rdata);
 		mpi_errhandler(MPI_Scatter(INTEGER(sexp_sdata), len, MPI_INT, 
 			INTEGER(sexp_rdata), len, MPI_INT, root, comm[commn]));
 		break;
 	case 2:
-		len=XLENGTH(sexp_rdata);
+		len=LENGTH(sexp_rdata);
 		mpi_errhandler(MPI_Scatter(REAL(sexp_sdata), len, MPI_DOUBLE, 
 			REAL(sexp_rdata), len, MPI_DOUBLE, root, comm[commn]));
 		break;
 	case 3:
- 		len=XLENGTH(STRING_ELT(sexp_rdata,0));
-                rlen=XLENGTH(STRING_ELT(sexp_rdata,0));
+ 		len=LENGTH(STRING_ELT(sexp_rdata,0));
+                rlen=LENGTH(STRING_ELT(sexp_rdata,0));
 
                 PROTECT (sexp_rdata2  = allocVector (STRSXP, 1));
                 rdata = (char *)Calloc(rlen, char);
@@ -388,7 +389,7 @@ SEXP mpi_scatter(SEXP sexp_sdata,
 		Free(rdata);
 		break;
 	case 4:
-                len=XLENGTH(sexp_rdata);
+                len=LENGTH(sexp_rdata);
                 mpi_errhandler(MPI_Scatter(RAW(sexp_sdata), len, MPI_BYTE,
                         RAW(sexp_rdata), len, MPI_BYTE, root, comm[commn]));
                 break;
@@ -427,20 +428,20 @@ SEXP mpi_scatterv(SEXP sexp_sdata,
 	
 	switch (INTEGER(sexp_type)[0]){
 	case 1:
-		 len=XLENGTH(sexp_rdata);
+		 len=LENGTH(sexp_rdata);
 		mpi_errhandler(MPI_Scatterv(INTEGER(sexp_sdata), INTEGER(sexp_sendcounts),
 			displs, MPI_INT, INTEGER(sexp_rdata), len, MPI_INT, 
 				root, comm[commn]));
 		break;
 	case 2:
-		 len=XLENGTH(sexp_rdata);
+		 len=LENGTH(sexp_rdata);
 		mpi_errhandler(MPI_Scatterv(REAL(sexp_sdata), INTEGER(sexp_sendcounts),
 			displs, MPI_DOUBLE, REAL(sexp_rdata), len,  
 				MPI_DOUBLE, root, comm[commn]));
 		break;
 	case 3:
-                len=XLENGTH(STRING_ELT(sexp_rdata,0));
-                rlen=XLENGTH(STRING_ELT(sexp_rdata,0));
+                len=LENGTH(STRING_ELT(sexp_rdata,0));
+                rlen=LENGTH(STRING_ELT(sexp_rdata,0));
 
                 PROTECT (sexp_rdata2  = allocVector (STRSXP, 1));
                 // rdata = (char *)R_alloc(rlen, sizeof(char));
@@ -452,7 +453,7 @@ SEXP mpi_scatterv(SEXP sexp_sdata,
 		Free(rdata);
 		break;
 	case 4:
-                len=XLENGTH(sexp_rdata);
+                len=LENGTH(sexp_rdata);
                 mpi_errhandler(MPI_Scatterv(RAW(sexp_sdata), INTEGER(sexp_sendcounts),
                         displs, MPI_BYTE, RAW(sexp_rdata), len,
                                 MPI_BYTE, root, comm[commn]));
@@ -484,18 +485,18 @@ SEXP mpi_allgather(SEXP sexp_sdata,
 	
 	switch (INTEGER(sexp_type)[0]){
 	case 1:
-		len=XLENGTH(sexp_sdata);
+		len=LENGTH(sexp_sdata);
 		mpi_errhandler(MPI_Allgather(INTEGER(sexp_sdata), len, MPI_INT, 
 			INTEGER(sexp_rdata), len, MPI_INT, comm[commn]));
 		break;
 	case 2:
-		len=XLENGTH(sexp_sdata);
+		len=LENGTH(sexp_sdata);
 		mpi_errhandler(MPI_Allgather(REAL(sexp_sdata), len, MPI_DOUBLE, 
 			REAL(sexp_rdata), len, MPI_DOUBLE, comm[commn]));
 		break;
 	case 3:
-	 	len=XLENGTH(STRING_ELT(sexp_sdata,0));
-                rlen=XLENGTH(STRING_ELT(sexp_rdata,0));
+	 	len=LENGTH(STRING_ELT(sexp_sdata,0));
+                rlen=LENGTH(STRING_ELT(sexp_rdata,0));
 
                 PROTECT (sexp_rdata2  = allocVector (STRSXP, 1));
                 rdata = (char *)Calloc(rlen, char);
@@ -506,7 +507,7 @@ SEXP mpi_allgather(SEXP sexp_sdata,
 		Free(rdata);
 		break;
  	case 4:
-                len=XLENGTH(sexp_sdata);
+                len=LENGTH(sexp_sdata);
                 mpi_errhandler(MPI_Allgather(RAW(sexp_sdata), len, MPI_BYTE,
                         RAW(sexp_rdata), len, MPI_BYTE, comm[commn]));
                 break;
@@ -541,20 +542,20 @@ SEXP mpi_allgatherv(SEXP sexp_sdata,
 
 	switch (INTEGER(sexp_type)[0]){
 	case 1:
-		len=XLENGTH(sexp_sdata);
+		len=LENGTH(sexp_sdata);
 		mpi_errhandler(MPI_Allgatherv(INTEGER(sexp_sdata), len, MPI_INT,
 			INTEGER(sexp_rdata), INTEGER(sexp_recvcounts), displs,
 				 MPI_INT,comm[commn]));
 		break;
 	case 2:
-		len=XLENGTH(sexp_sdata);
+		len=LENGTH(sexp_sdata);
 		mpi_errhandler(MPI_Allgatherv(REAL(sexp_sdata), len, MPI_DOUBLE,
 			REAL(sexp_rdata), INTEGER(sexp_recvcounts), displs, 
 				MPI_DOUBLE, comm[commn]));
 		break;
 	case 3:
-	 	len=XLENGTH(STRING_ELT(sexp_sdata,0));
-                rlen=XLENGTH(STRING_ELT(sexp_rdata,0));
+	 	len=LENGTH(STRING_ELT(sexp_sdata,0));
+                rlen=LENGTH(STRING_ELT(sexp_rdata,0));
 
                 PROTECT (sexp_rdata2  = allocVector (STRSXP, 1));
                 rdata = (char *)Calloc(rlen, char);
@@ -565,7 +566,7 @@ SEXP mpi_allgatherv(SEXP sexp_sdata,
 		Free(rdata);
 		break;
  	case 4:
-                len=XLENGTH(sexp_sdata);
+                len=LENGTH(sexp_sdata);
                 mpi_errhandler(MPI_Allgatherv(RAW(sexp_sdata), len, MPI_BYTE,
                         RAW(sexp_rdata), INTEGER(sexp_recvcounts), displs,
                                 MPI_BYTE, comm[commn]));
@@ -589,7 +590,9 @@ SEXP mpi_bcast(SEXP sexp_data,
 			   SEXP	sexp_rank,
 			   SEXP sexp_comm){
 
-	int len=XLENGTH(sexp_data), type=INTEGER(sexp_type)[0];
+	//WCC int len=LENGTH(sexp_data), type=INTEGER(sexp_type)[0];
+	R_xlen_t len = XLENGTH(sexp_data);
+	int type=INTEGER(sexp_type)[0];
 	int rank=INTEGER(sexp_rank)[0], root,  commn=INTEGER(sexp_comm)[0],slen;
 	int errcode=0;
 	char *rdata;
@@ -597,14 +600,16 @@ SEXP mpi_bcast(SEXP sexp_data,
 
 	switch (type){
 	case 1:
-		errcode=MPI_Bcast(INTEGER(sexp_data), len, MPI_INT, rank, comm[commn]);
+		//WCC errcode=MPI_Bcast(INTEGER(sexp_data), len, MPI_INT, rank, comm[commn]);
+		MPI_Bcast_spmd(INTEGER(sexp_data), len, MPI_INT, rank, comm[commn]);
 		break;
 	case 2:
-		mpi_errhandler(MPI_Bcast(REAL(sexp_data), len, MPI_DOUBLE, rank, comm[commn]));
+		//WCC mpi_errhandler(MPI_Bcast(REAL(sexp_data), len, MPI_DOUBLE, rank, comm[commn]));
+		MPI_Bcast_spmd(REAL(sexp_data), len, MPI_DOUBLE, rank, comm[commn]);
 		break;
 	case 3:
         	MPI_Comm_rank(comm[commn], &root);
-		slen=XLENGTH(STRING_ELT (sexp_data,0)); 
+		slen=LENGTH(STRING_ELT (sexp_data,0)); 
 		if (rank==root) 
 			MPI_Bcast(CHAR2 (STRING_ELT (sexp_data,0)), slen, 
 				MPI_CHAR, rank, comm[commn]);
@@ -618,7 +623,8 @@ SEXP mpi_bcast(SEXP sexp_data,
 		}
 		break;
 	case 4:
-                errcode=MPI_Bcast(RAW(sexp_data), len, MPI_BYTE, rank, comm[commn]);
+                //WCC errcode=MPI_Bcast(RAW(sexp_data), len, MPI_BYTE, rank, comm[commn]);
+                MPI_Bcast_spmd(RAW(sexp_data), len, MPI_BYTE, rank, comm[commn]);
                 break;
 
 	default:
@@ -647,7 +653,7 @@ SEXP mpi_send(SEXP sexp_data,
 			  SEXP sexp_dest, 
 			  SEXP sexp_tag,
 			  SEXP sexp_comm){
-	int slen,len=XLENGTH(sexp_data),type=INTEGER(sexp_type)[0], dest=INTEGER(sexp_dest)[0];
+	int slen,len=LENGTH(sexp_data),type=INTEGER(sexp_type)[0], dest=INTEGER(sexp_dest)[0];
 	int commn=INTEGER(sexp_comm)[0], tag=INTEGER(sexp_tag)[0];
 
 	switch (type){
@@ -658,7 +664,7 @@ SEXP mpi_send(SEXP sexp_data,
 		mpi_errhandler(MPI_Send(REAL(sexp_data), len, MPI_DOUBLE, dest, tag, comm[commn]));
 		break;
 	case 3:
-		slen=XLENGTH(STRING_ELT(sexp_data,0));
+		slen=LENGTH(STRING_ELT(sexp_data,0));
 		MPI_Send(CHAR2(STRING_ELT(sexp_data,0)),slen, MPI_CHAR, dest, tag, comm[commn]); 
 		break;
         case 4:
@@ -680,7 +686,7 @@ SEXP mpi_recv(SEXP sexp_data,
 			  SEXP sexp_tag,
 			  SEXP sexp_comm,
 			  SEXP sexp_status){
-	int len=XLENGTH(sexp_data), type=INTEGER(sexp_type)[0], source=INTEGER(sexp_source)[0];
+	int len=LENGTH(sexp_data), type=INTEGER(sexp_type)[0], source=INTEGER(sexp_source)[0];
 	int tag=INTEGER(sexp_tag)[0],commn=INTEGER(sexp_comm)[0], statusn=INTEGER(sexp_status)[0];
 	int slen;
 	char *rdata;
@@ -696,7 +702,7 @@ SEXP mpi_recv(SEXP sexp_data,
 			&status[statusn]));
 		break;
 	case 3:
-		slen=XLENGTH(STRING_ELT(sexp_data,0));
+		slen=LENGTH(STRING_ELT(sexp_data,0));
                 PROTECT (sexp_data2  = allocVector (STRSXP, 1));
                 rdata = (char *)Calloc(slen, char);
 		MPI_Recv(rdata, slen,MPI_CHAR,source,tag, comm[commn],&status[statusn]);
@@ -727,7 +733,7 @@ SEXP mpi_reduce(SEXP sexp_send,
 				SEXP sexp_op, 
 				SEXP sexp_dest,
 				SEXP sexp_comm){
-	int len=XLENGTH(sexp_send), type=INTEGER(sexp_type)[0], dest=INTEGER(sexp_dest)[0];
+	int len=LENGTH(sexp_send), type=INTEGER(sexp_type)[0], dest=INTEGER(sexp_dest)[0];
 	int commn=INTEGER(sexp_comm)[0], intop = INTEGER(sexp_op)[0];
 	MPI_Op op= MPI_SUM;
 	SEXP sexp_recv = NULL;
@@ -813,7 +819,7 @@ SEXP mpi_allreduce(SEXP sexp_send,
 				   SEXP sexp_type,
 				   SEXP sexp_op,
 				   SEXP sexp_comm){
-	int len=XLENGTH(sexp_send), type=INTEGER(sexp_type)[0], commn=INTEGER(sexp_comm)[0];
+	int len=LENGTH(sexp_send), type=INTEGER(sexp_type)[0], commn=INTEGER(sexp_comm)[0];
 	int intop = INTEGER(sexp_op)[0];
 	MPI_Op op = MPI_SUM;
 	SEXP sexp_recv = NULL;
@@ -1016,7 +1022,7 @@ SEXP mpi_comm_spawn (SEXP sexp_slave,
 					 SEXP sexp_root,
 					 SEXP sexp_intercomm,
 					 SEXP sexp_quiet){
-    int i, nslave = INTEGER (sexp_nslave)[0], len = XLENGTH (sexp_argv);
+    int i, nslave = INTEGER (sexp_nslave)[0], len = LENGTH (sexp_argv);
 	int infon=INTEGER(sexp_info)[0], root=INTEGER(sexp_root)[0];
 	int intercommn=INTEGER(sexp_intercomm)[0], *slaverrcode, realns;
     int quiet = INTEGER(sexp_quiet)[0];
@@ -1088,9 +1094,9 @@ SEXP mpi_sendrecv(SEXP sexp_senddata,
         SEXP sexp_status)
 {
     int slen, rlen;
-    int sendcount=XLENGTH(sexp_senddata), sendtype=INTEGER(sexp_sendtype)[0];
+    int sendcount=LENGTH(sexp_senddata), sendtype=INTEGER(sexp_sendtype)[0];
     int dest=INTEGER(sexp_dest)[0], sendtag=INTEGER(sexp_sendtag)[0];
-    int recvcount=XLENGTH(sexp_recvdata), recvtype=INTEGER(sexp_recvtype)[0];
+    int recvcount=LENGTH(sexp_recvdata), recvtype=INTEGER(sexp_recvtype)[0];
     int source=INTEGER(sexp_source)[0], recvtag=INTEGER(sexp_recvtag)[0];
     int commn=INTEGER(sexp_comm)[0],statusn=INTEGER(sexp_status)[0];
     char *rdata;
@@ -1112,7 +1118,7 @@ SEXP mpi_sendrecv(SEXP sexp_senddata,
                         comm[commn], &status[statusn]);
                     break;
                 case 3:
-                    rlen=XLENGTH(STRING_ELT(sexp_recvdata,0)); 
+                    rlen=LENGTH(STRING_ELT(sexp_recvdata,0)); 
                     PROTECT (sexp_recvdata2  = allocVector (STRSXP, 1));
                     rdata = (char *)Calloc(rlen, char);
                     MPI_Sendrecv(INTEGER(sexp_senddata),sendcount, MPI_INT, dest, sendtag, 
@@ -1144,7 +1150,7 @@ SEXP mpi_sendrecv(SEXP sexp_senddata,
                         comm[commn], &status[statusn]);
                     break;
                 case 3:
-                    rlen=XLENGTH(STRING_ELT(sexp_recvdata,0)); 
+                    rlen=LENGTH(STRING_ELT(sexp_recvdata,0)); 
                     PROTECT (sexp_recvdata2  = allocVector (STRSXP, 1));
                     rdata = (char *)Calloc(rlen, char);
                     MPI_Sendrecv(REAL(sexp_senddata),sendcount, MPI_DOUBLE, dest, sendtag, 
@@ -1163,7 +1169,7 @@ SEXP mpi_sendrecv(SEXP sexp_senddata,
                 }
             break;
         case 3: 
-            slen=XLENGTH(STRING_ELT(sexp_senddata,0));                       
+            slen=LENGTH(STRING_ELT(sexp_senddata,0));                       
   
             switch(recvtype){
                	case 1:
@@ -1179,7 +1185,7 @@ SEXP mpi_sendrecv(SEXP sexp_senddata,
                         comm[commn], &status[statusn]);
                     break;
                 case 3:
-                    rlen=XLENGTH(STRING_ELT(sexp_recvdata,0));
+                    rlen=LENGTH(STRING_ELT(sexp_recvdata,0));
                     PROTECT (sexp_recvdata2  = allocVector (STRSXP, 1));
                     rdata = (char *)Calloc(rlen, char);
 
@@ -1213,7 +1219,7 @@ SEXP mpi_sendrecv(SEXP sexp_senddata,
                         comm[commn], &status[statusn]);
                     break;
                 case 3:
-                    rlen=XLENGTH(STRING_ELT(sexp_recvdata,0));
+                    rlen=LENGTH(STRING_ELT(sexp_recvdata,0));
                     PROTECT (sexp_recvdata2  = allocVector (STRSXP, 1));
                     rdata = (char *)Calloc(rlen, char);
                     MPI_Sendrecv(RAW(sexp_senddata),sendcount, MPI_BYTE, dest, sendtag, 
@@ -1248,7 +1254,7 @@ SEXP mpi_sendrecv_replace(SEXP sexp_data,
         SEXP sexp_status)
 {
         int slen;
-        int len=XLENGTH(sexp_data), type=INTEGER(sexp_type)[0];
+        int len=LENGTH(sexp_data), type=INTEGER(sexp_type)[0];
         int dest=INTEGER(sexp_dest)[0], sendtag=INTEGER(sexp_sendtag)[0];
         int source=INTEGER(sexp_source)[0],recvtag=INTEGER(sexp_recvtag)[0];
         int commn=INTEGER(sexp_comm)[0],statusn=INTEGER(sexp_status)[0];
@@ -1266,7 +1272,7 @@ SEXP mpi_sendrecv_replace(SEXP sexp_data,
                 break;
 
         case 3:
-                slen=XLENGTH(STRING_ELT(sexp_data,0));
+                slen=LENGTH(STRING_ELT(sexp_data,0));
 		PROTECT (sexp_data2  = allocVector (STRSXP, 1));
 		srdata= (char *)Calloc(slen, char);
 		strcpy(srdata, CHAR(STRING_ELT(sexp_data,0)));
@@ -1298,7 +1304,7 @@ SEXP mpi_sendrecv_replace(SEXP sexp_data,
 SEXP mpi_cart_create(SEXP sexp_comm_old,  SEXP sexp_dims, SEXP sexp_periods, SEXP sexp_reorder, 
            SEXP sexp_comm_cart) {
         int comm_old = INTEGER(sexp_comm_old)[0];
-        int ndims = XLENGTH(sexp_dims);
+        int ndims = LENGTH(sexp_dims);
         int reorder = INTEGER(sexp_reorder)[0];
         int comm_cart = INTEGER(sexp_comm_cart)[0];
         int retcode; 
@@ -1375,7 +1381,7 @@ SEXP mpi_isend(SEXP sexp_data,
                           SEXP sexp_tag,
                           SEXP sexp_comm,
                           SEXP sexp_request){
-        int slen,len=XLENGTH(sexp_data),type=INTEGER(sexp_type)[0], dest=INTEGER(sexp_dest)[0];
+        int slen,len=LENGTH(sexp_data),type=INTEGER(sexp_type)[0], dest=INTEGER(sexp_dest)[0];
         int commn=INTEGER(sexp_comm)[0], tag=INTEGER(sexp_tag)[0], requestn=INTEGER(sexp_request)[0];
         
         switch (type){
@@ -1389,7 +1395,7 @@ SEXP mpi_isend(SEXP sexp_data,
 			&request[requestn]));
                 break;
         case 3:
-                slen=XLENGTH(STRING_ELT(sexp_data,0));
+                slen=LENGTH(STRING_ELT(sexp_data,0));
                 mpi_errhandler(MPI_Isend(CHAR2(STRING_ELT(sexp_data,0)),slen, MPI_CHAR, dest, 
 			tag, comm[commn], &request[requestn]));
                 break;
@@ -1415,7 +1421,7 @@ SEXP mpi_irecv(SEXP sexp_data,
                           SEXP sexp_tag,
                           SEXP sexp_comm,
                           SEXP sexp_request){
-        int slen,len=XLENGTH(sexp_data),type=INTEGER(sexp_type)[0], source=INTEGER(sexp_source)[0];
+        int slen,len=LENGTH(sexp_data),type=INTEGER(sexp_type)[0], source=INTEGER(sexp_source)[0];
         int commn=INTEGER(sexp_comm)[0], tag=INTEGER(sexp_tag)[0], requestn=INTEGER(sexp_request)[0];
 
         switch (type){
@@ -1428,7 +1434,7 @@ SEXP mpi_irecv(SEXP sexp_data,
 			&request[requestn]));
                 break;
         case 3:
-                slen=XLENGTH(STRING_ELT(sexp_data,0));
+                slen=LENGTH(STRING_ELT(sexp_data,0));
                         mpi_errhandler(MPI_Irecv(CHAR2(STRING_ELT(sexp_data,0)),slen, MPI_CHAR, 
 				source, tag, comm[commn], &request[requestn]));
                 break;

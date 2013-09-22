@@ -46,10 +46,10 @@ SEXP mkstr(SEXP sexp_charlen){
 
 /*
 SEXP stringslink(SEXP sexp_strings,SEXP new_string){
-        int i, sum=0,stringlen = XLENGTH(sexp_strings);
+        int i, sum=0,stringlen = LENGTH(sexp_strings);
 	int sublen[stringlen];
         for(i=0;i<stringlen;i++)
-        	sublen[i]=XLENGTH(STRING_ELT(sexp_strings,i));
+        	sublen[i]=LENGTH(STRING_ELT(sexp_strings,i));
         for (i=0; i < stringlen; i++){
         	memcpy(CHAR(STRING_ELT(new_string,0))+sum,CHAR(STRING_ELT(sexp_strings,i)),sublen[i]);
         	sum=sum+sublen[i];
@@ -58,10 +58,10 @@ SEXP stringslink(SEXP sexp_strings,SEXP new_string){
 }
 
 SEXP stringcut(SEXP sexp_string,SEXP new_strings){
-        int i, sum=0,stringlen = XLENGTH(new_strings);
+        int i, sum=0,stringlen = LENGTH(new_strings);
         int sublen[stringlen];
         for(i=0;i<stringlen;i++)
-                sublen[i]=XLENGTH(STRING_ELT(new_strings,i));
+                sublen[i]=LENGTH(STRING_ELT(new_strings,i));
         for (i=0; i < stringlen; i++){
                 memcpy(CHAR(STRING_ELT(new_strings,i)),
 			CHAR(STRING_ELT(sexp_string,0))+sum,sublen[i]);
