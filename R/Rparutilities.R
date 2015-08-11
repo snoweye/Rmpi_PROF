@@ -387,7 +387,7 @@ tailslave.log <- function(nlines=3,comm=1){
     logfile <- paste("*.",tmp,".*.log", sep="")
     if (length(system(paste("ls", logfile),TRUE,ignore.stderr=TRUE))==0)
     stop("It seems no slave log files.")
-    system(paste("tail -",nlines," ", logfile,sep=""))
+    system(paste0("tail -n ",nlines," ", logfile))
 }
 
 mpi.apply <- function(x, fun, ...,  comm=1){
